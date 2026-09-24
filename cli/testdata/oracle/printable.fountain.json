@@ -1,0 +1,273 @@
+{
+  "tokens": [
+    {
+      "type": "title",
+      "text": "Printable Project"
+    },
+    {
+      "type": "credit",
+      "text": "Written by"
+    },
+    {
+      "type": "author",
+      "text": "Wonder Unit"
+    },
+    {
+      "type": "scene_heading",
+      "text": "EXT. A PLACE - DAY",
+      "scene_number": "1-7BUNG"
+    },
+    {
+      "type": "action",
+      "text": "From outside the house, a person calls out."
+    },
+    {
+      "type": "dialogue_begin"
+    },
+    {
+      "type": "character",
+      "text": "PERSON A"
+    },
+    {
+      "type": "dialogue",
+      "text": "Hello!"
+    },
+    {
+      "type": "dialogue_end"
+    },
+    {
+      "type": "transition",
+      "text": "SMASH CUT TO:"
+    },
+    {
+      "type": "scene_heading",
+      "text": "INT. A PLACE - DAY",
+      "scene_number": "2-50YWC"
+    },
+    {
+      "type": "action",
+      "text": "Inside of the house, another person responds."
+    },
+    {
+      "type": "dialogue_begin"
+    },
+    {
+      "type": "character",
+      "text": "PERSON B"
+    },
+    {
+      "type": "dialogue",
+      "text": "Привет!"
+    },
+    {
+      "type": "dialogue_end"
+    },
+    {
+      "type": "transition",
+      "text": "CUT TO:"
+    },
+    {
+      "type": "scene_heading",
+      "text": "EXT. HOUSE - DAY",
+      "scene_number": "3-0VAZK"
+    },
+    {
+      "type": "action",
+      "text": "Outside again. The caller waves."
+    },
+    {
+      "type": "transition",
+      "text": "FADE TO BLACK."
+    },
+    {
+      "type": "centered",
+      "text": "THE END"
+    }
+  ],
+  "scriptData": [
+    {
+      "type": "title",
+      "text": "Printable Project",
+      "page": 1,
+      "time": 0,
+      "duration": 2000,
+      "scene": 0,
+      "credit": "Written by",
+      "author": "Wonder Unit"
+    },
+    {
+      "type": "scene",
+      "script": [
+        {
+          "time": 2000,
+          "duration": 2000,
+          "type": "scene_padding",
+          "scene": 1,
+          "page": 1
+        },
+        {
+          "type": "scene_heading",
+          "text": "EXT. A PLACE - DAY",
+          "scene_number": "1-7BUNG",
+          "page": 1,
+          "time": 4000,
+          "duration": 0,
+          "scene": 1
+        },
+        {
+          "type": "action",
+          "text": "From outside the house, a person calls out.",
+          "page": 1,
+          "time": 4000,
+          "duration": 2100,
+          "scene": 1
+        },
+        {
+          "type": "dialogue",
+          "text": "Hello!",
+          "page": 1,
+          "time": 6100,
+          "duration": 1300,
+          "scene": 1,
+          "character": "PERSON A"
+        },
+        {
+          "type": "transition",
+          "text": "SMASH CUT TO:",
+          "page": 1,
+          "time": 7400,
+          "duration": 1000,
+          "scene": 1
+        }
+      ],
+      "scene_number": 1,
+      "scene_id": "1-7BUNG",
+      "slugline": "EXT. A PLACE - DAY",
+      "time": 4000,
+      "page": 1,
+      "duration": 6400,
+      "word_count": 19
+    },
+    {
+      "type": "scene",
+      "script": [
+        {
+          "time": 8400,
+          "duration": 2000,
+          "type": "scene_padding",
+          "scene": 2,
+          "page": 1
+        },
+        {
+          "type": "scene_heading",
+          "text": "INT. A PLACE - DAY",
+          "scene_number": "2-50YWC",
+          "page": 1,
+          "time": 10400,
+          "duration": 0,
+          "scene": 2
+        },
+        {
+          "type": "action",
+          "text": "Inside of the house, another person responds.",
+          "page": 1,
+          "time": 10400,
+          "duration": 1900,
+          "scene": 2
+        },
+        {
+          "type": "dialogue",
+          "text": "Привет!",
+          "page": 1,
+          "time": 12300,
+          "duration": 1300,
+          "scene": 2,
+          "character": "PERSON B"
+        },
+        {
+          "type": "transition",
+          "text": "CUT TO:",
+          "page": 1,
+          "time": 13600,
+          "duration": 1000,
+          "scene": 2
+        }
+      ],
+      "scene_number": 2,
+      "scene_id": "2-50YWC",
+      "slugline": "INT. A PLACE - DAY",
+      "time": 10400,
+      "page": 1,
+      "duration": 6200,
+      "word_count": 17
+    },
+    {
+      "type": "scene",
+      "script": [
+        {
+          "time": 14600,
+          "duration": 2000,
+          "type": "scene_padding",
+          "scene": 3,
+          "page": 1
+        },
+        {
+          "type": "scene_heading",
+          "text": "EXT. HOUSE - DAY",
+          "scene_number": "3-0VAZK",
+          "page": 1,
+          "time": 16600,
+          "duration": 0,
+          "scene": 3
+        },
+        {
+          "type": "action",
+          "text": "Outside again. The caller waves.",
+          "page": 1,
+          "time": 16600,
+          "duration": 1500,
+          "scene": 3
+        },
+        {
+          "type": "transition",
+          "text": "FADE TO BLACK.",
+          "page": 1,
+          "time": 18100,
+          "duration": 1000,
+          "scene": 3
+        }
+      ],
+      "scene_number": 3,
+      "scene_id": "3-0VAZK",
+      "slugline": "EXT. HOUSE - DAY",
+      "time": 16600,
+      "page": 1,
+      "duration": 4500,
+      "word_count": 12
+    }
+  ],
+  "locations": [
+    [
+      "EXT. A PLACE",
+      1
+    ],
+    [
+      "INT. A PLACE",
+      1
+    ],
+    [
+      "EXT. HOUSE",
+      1
+    ]
+  ],
+  "characters": [
+    [
+      "PERSON A",
+      1
+    ],
+    [
+      "PERSON B",
+      1
+    ]
+  ]
+}

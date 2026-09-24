@@ -1,0 +1,422 @@
+[
+  {
+    "id": "preset-bcdaf15",
+    "title": "Landscape Minimal 3×5",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        3,
+        5
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "duration",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-ef6b965",
+    "title": "Landscape Minimal 3×2",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        3,
+        2
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "duration",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-9782c3c",
+    "title": "Landscape 3×",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        3,
+        1
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "duration",
+      "boardTextSize": 7,
+      "boardBorderStyle": "full",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-f0b6ef5",
+    "title": "Landscape Minimal 4×4",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        4,
+        4
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "duration",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-97bdefb",
+    "title": "Landscape Minimal 1×",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        1,
+        1
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "duration",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-07fa6ed",
+    "title": "Landscape Solo 1×",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        1,
+        1
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "none",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": false,
+          "shots": false,
+          "sceneDuration": false,
+          "aspectRatio": false,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-3c3532b",
+    "title": "Landscape Thumbs 2×2",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        2,
+        2
+      ],
+      "direction": "column",
+      "enableDialogue": false,
+      "enableAction": false,
+      "enableNotes": false,
+      "enableShotNumber": false,
+      "boardTimeDisplay": "none",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-7415d88",
+    "title": "Landscape Thumbs 3×3",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        3,
+        3
+      ],
+      "direction": "column",
+      "enableDialogue": false,
+      "enableAction": false,
+      "enableNotes": false,
+      "enableShotNumber": false,
+      "boardTimeDisplay": "none",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-110b5e4",
+    "title": "Landscape Thumbs 6×5",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        6,
+        5
+      ],
+      "direction": "column",
+      "enableDialogue": false,
+      "enableAction": false,
+      "enableNotes": false,
+      "enableShotNumber": false,
+      "boardTimeDisplay": "none",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-8949e51",
+    "title": "Hey-oh!",
+    "data": {
+      "orientation": "portrait",
+      "gridDim": [
+        1,
+        5
+      ],
+      "direction": "row",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "duration",
+      "boardTextSize": 7,
+      "boardBorderStyle": "full",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-4feebf9",
+    "title": "Landscape Hey-oh!",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        1,
+        5
+      ],
+      "direction": "row",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "duration",
+      "boardTextSize": 7,
+      "boardBorderStyle": "full",
+      "header": {
+        "stats": {
+          "boards": true,
+          "shots": true,
+          "sceneDuration": true,
+          "aspectRatio": true,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-e32799a",
+    "title": "Landscape Storytime 4×2",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        4,
+        2
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "none",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": false,
+          "shots": false,
+          "sceneDuration": false,
+          "aspectRatio": false,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-d11d6df",
+    "title": "Portrait Storytime 4×3",
+    "data": {
+      "orientation": "portrait",
+      "gridDim": [
+        4,
+        3
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "none",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": false,
+          "shots": false,
+          "sceneDuration": false,
+          "aspectRatio": false,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-49b851f",
+    "title": "Landscape Pairs 2×",
+    "data": {
+      "orientation": "landscape",
+      "gridDim": [
+        2,
+        1
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "none",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": false,
+          "shots": false,
+          "sceneDuration": false,
+          "aspectRatio": false,
+          "dateExported": true
+        }
+      }
+    }
+  },
+  {
+    "id": "preset-6df1a27",
+    "title": "Portrait Pairs 2×4",
+    "data": {
+      "orientation": "portrait",
+      "gridDim": [
+        2,
+        4
+      ],
+      "direction": "column",
+      "enableDialogue": true,
+      "enableAction": true,
+      "enableNotes": true,
+      "enableShotNumber": true,
+      "boardTimeDisplay": "none",
+      "boardTextSize": 7,
+      "boardBorderStyle": "minimal",
+      "header": {
+        "stats": {
+          "boards": false,
+          "shots": false,
+          "sceneDuration": false,
+          "aspectRatio": false,
+          "dateExported": true
+        }
+      }
+    }
+  }
+]

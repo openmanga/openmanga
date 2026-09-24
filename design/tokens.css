@@ -1,0 +1,72 @@
+/* Design tokens exported from design/storyboarder.pen (sb-* variables, "appearance" theme axis).
+   Dark is the default appearance; light is the alternate. */
+:root, :root[data-appearance="dark"] {
+  --sb-window: #2B2B2B;
+  --sb-toolbar: #323232;
+  --sb-sidebar: #262628;
+  --sb-inspector: #2A2A2C;
+  --sb-desk: #1A1A1B;
+  --sb-content: #1E1E1E;
+  --sb-group: #FFFFFF0F;
+  --sb-control: #FFFFFF24;
+  --sb-control-pressed: #FFFFFF1F;
+  --sb-hover: #FFFFFF14;
+  --sb-separator: #FFFFFF1A;
+  --sb-border: #FFFFFF26;
+  --sb-label: #F5F5F7;
+  --sb-label-2: #A1A1A6;
+  --sb-label-3: #6E6E73;
+  --sb-accent: #0A84FF;
+  --sb-accent-soft: #0A84FF40;
+  --sb-selection: #0A5FD6;
+  --sb-red: #FF453A;
+  --sb-orange: #FF9F0A;
+  --sb-green: #30D158;
+  --sb-shadow: #00000080;
+  --sb-popover: #2C2C2E;
+  --sb-sheet: #2A2A2C;
+  --sb-glass: #2C2C2FD1;
+  --sb-glass-stroke: #FFFFFF26;
+  --sb-glass-edge: #00000066;
+  --sb-glass-shadow: #00000073;
+}
+:root[data-appearance="light"] {
+  --sb-window: #ECECEC;
+  --sb-toolbar: #F3F3F3;
+  --sb-sidebar: #E4E4E6;
+  --sb-inspector: #EEEEEF;
+  --sb-desk: #D6D6D8;
+  --sb-content: #FFFFFF;
+  --sb-group: #FFFFFFB3;
+  --sb-control: #FFFFFF;
+  --sb-control-pressed: #0000001A;
+  --sb-hover: #0000000F;
+  --sb-separator: #0000001F;
+  --sb-border: #00000026;
+  --sb-label: #1D1D1F;
+  --sb-label-2: #6E6E73;
+  --sb-label-3: #A1A1A6;
+  --sb-accent: #007AFF;
+  --sb-accent-soft: #007AFF26;
+  --sb-selection: #0063E1;
+  --sb-red: #FF3B30;
+  --sb-orange: #FF9500;
+  --sb-green: #34C759;
+  --sb-shadow: #0000002E;
+  --sb-popover: #F6F6F6;
+  --sb-sheet: #F0F0F0;
+  --sb-glass: #F7F7F9D1;
+  --sb-glass-stroke: #FFFFFFCC;
+  --sb-glass-edge: #0000001A;
+  --sb-glass-shadow: #00000024;
+}
+:root {
+  --sb-on-accent: #FFFFFF;
+  --sb-paper: #FBFAF6;
+  --sb-ink: #1A1A1A;
+  --sb-pencil: #5E5E66;
+  --sb-lightpencil: #8FB8E8;
+  --sb-note: #E5484D;
+  /* The design uses Inter only because Pencil rejects SF Pro; the app uses the real system font. */
+  --sb-font: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
+}

@@ -1,0 +1,19 @@
+[package]
+name = "storyboarder-next"
+version = "0.1.0"
+description = "Storyboarder Next"
+edition = "2021"
+rust-version = "1.77.2"
+
+[lib]
+name = "app_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6.3", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+tauri = { version = "2.11.6", features = ["protocol-asset"] }
+tauri-plugin-dialog = "2"
+notify = "8"

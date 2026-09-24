@@ -1,0 +1,53 @@
+Title: **The Extra** Test
+Credit: Written by
+Author: Somebody
+Draft date: 1/2/2020
+Contact:
+Someone
+someone@example.com
+
+# ACT ONE
+
+= The opening sequence synopsis.
+
+INT. KITCHEN - NIGHT #1-AAAAA#
+
+= Kitchen synopsis here.
+
+Some *italic* and **bold** and _underlined_ action. [[a note inside]] more words.
+Second line of action.
+
+BOB
+(quietly)
+Hello there, how are you doing today?
+(beat)
+Fine.
+
+ALICE ^
+I'm _fine_ thanks.
+
+/* boneyard
+stuff */
+
+.FORCED HEADING
+
+A line // with comment and http://example.com
+
+> CENTERED TEXT <
+
+===
+
+## Sub section
+
+EXT. GARDEN - DAY
+
+Words    with   extra    spaces.
+
+CUT TO:
+
+INT./EXT. CAR - MOVING #3-CCCCC#
+
+[[standalone note]]
+
+MARY (V.O.)
+Last line.

@@ -1,0 +1,410 @@
+{
+  "tokens": [
+    {
+      "type": "title",
+      "text": "<span class=\"bold\">The Extra</span> Test"
+    },
+    {
+      "type": "credit",
+      "text": "Written by"
+    },
+    {
+      "type": "author",
+      "text": "Somebody"
+    },
+    {
+      "type": "draft_date",
+      "text": "1/2/2020"
+    },
+    {
+      "type": "contact",
+      "text": "Someone<br />someone@example.com"
+    },
+    {
+      "type": "section",
+      "text": "ACT ONE",
+      "depth": 1
+    },
+    {
+      "type": "synopsis",
+      "text": "The opening sequence synopsis."
+    },
+    {
+      "type": "scene_heading",
+      "text": "INT. KITCHEN - NIGHT",
+      "scene_number": "1-AAAAA"
+    },
+    {
+      "type": "synopsis",
+      "text": "Kitchen synopsis here."
+    },
+    {
+      "type": "action",
+      "text": "Some <span class=\"italic\">italic</span> and <span class=\"bold\">bold</span> and <span class=\"underline\">underlined</span> action. <!-- a note inside --> more words.<br />Second line of action."
+    },
+    {
+      "type": "dual_dialogue_begin"
+    },
+    {
+      "type": "dialogue_begin",
+      "dual": "left"
+    },
+    {
+      "type": "character",
+      "text": "BOB"
+    },
+    {
+      "type": "parenthetical",
+      "text": "(quietly)"
+    },
+    {
+      "type": "dialogue",
+      "text": "Hello there, how are you doing today?<br />"
+    },
+    {
+      "type": "parenthetical",
+      "text": "(beat)"
+    },
+    {
+      "type": "dialogue",
+      "text": "Fine."
+    },
+    {
+      "type": "dialogue_end"
+    },
+    {
+      "type": "dialogue_begin",
+      "dual": "right"
+    },
+    {
+      "type": "character",
+      "text": "ALICE"
+    },
+    {
+      "type": "dialogue",
+      "text": "I'm <span class=\"underline\">fine</span> thanks."
+    },
+    {
+      "type": "dialogue_end"
+    },
+    {
+      "type": "dual_dialogue_end"
+    },
+    {
+      "type": "scene_heading",
+      "text": "FORCED HEADING"
+    },
+    {
+      "type": "action",
+      "text": "A line"
+    },
+    {
+      "type": "centered",
+      "text": "CENTERED TEXT"
+    },
+    {
+      "type": "page_break"
+    },
+    {
+      "type": "section",
+      "text": "Sub section",
+      "depth": 2
+    },
+    {
+      "type": "scene_heading",
+      "text": "EXT. GARDEN - DAY"
+    },
+    {
+      "type": "action",
+      "text": "Words    with   extra    spaces."
+    },
+    {
+      "type": "transition",
+      "text": "CUT TO:"
+    },
+    {
+      "type": "scene_heading",
+      "text": "INT./EXT. CAR - MOVING",
+      "scene_number": "3-CCCCC"
+    },
+    {
+      "type": "note",
+      "text": "standalone note"
+    },
+    {
+      "type": "dialogue_begin"
+    },
+    {
+      "type": "character",
+      "text": "MARY (V.O.)"
+    },
+    {
+      "type": "dialogue",
+      "text": "Last line."
+    },
+    {
+      "type": "dialogue_end"
+    }
+  ],
+  "scriptData": [
+    {
+      "type": "title",
+      "text": "<span class=\"bold\">The Extra</span> Test",
+      "page": 1,
+      "time": 0,
+      "duration": 2000,
+      "scene": 0,
+      "credit": "Written by",
+      "author": "Somebody",
+      "draft_date": "1/2/2020",
+      "contact": "Someone<br />someone@example.com"
+    },
+    {
+      "type": "section",
+      "text": "ACT ONE",
+      "depth": 1,
+      "page": 1,
+      "time": 2000,
+      "duration": 0,
+      "scene": 0
+    },
+    {
+      "type": "scene",
+      "script": [
+        {
+          "time": 2000,
+          "duration": 2000,
+          "type": "scene_padding",
+          "scene": 1,
+          "page": 1
+        },
+        {
+          "type": "scene_heading",
+          "text": "INT. KITCHEN - NIGHT",
+          "scene_number": "1-AAAAA",
+          "page": 1,
+          "time": 4000,
+          "duration": 0,
+          "scene": 1
+        },
+        {
+          "type": "action",
+          "text": "Some <span class=\"italic\">italic</span> and <span class=\"bold\">bold</span> and <span class=\"underline\">underlined</span> action. <!-- a note inside --> more words.<br />Second line of action.",
+          "page": 1,
+          "time": 4000,
+          "duration": 4700,
+          "scene": 1
+        },
+        {
+          "type": "parenthetical",
+          "text": "(quietly)",
+          "page": 1,
+          "time": 8700,
+          "duration": 1300,
+          "scene": 1,
+          "character": "BOB"
+        },
+        {
+          "type": "dialogue",
+          "text": "Hello there, how are you doing today?<br />",
+          "page": 1,
+          "time": 10000,
+          "duration": 3400,
+          "scene": 1,
+          "character": "BOB"
+        },
+        {
+          "type": "parenthetical",
+          "text": "(beat)",
+          "page": 1,
+          "time": 13400,
+          "duration": 1300,
+          "scene": 1,
+          "character": "BOB"
+        },
+        {
+          "type": "dialogue",
+          "text": "Fine.",
+          "page": 1,
+          "time": 14700,
+          "duration": 1300,
+          "scene": 1,
+          "character": "BOB"
+        },
+        {
+          "type": "dialogue",
+          "text": "I'm <span class=\"underline\">fine</span> thanks.",
+          "page": 1,
+          "time": 16000,
+          "duration": 2200,
+          "scene": 1,
+          "character": "ALICE"
+        }
+      ],
+      "scene_number": 1,
+      "scene_id": "1-AAAAA",
+      "slugline": "INT. KITCHEN - NIGHT",
+      "time": 4000,
+      "page": 1,
+      "synopsis": "Kitchen synopsis here.",
+      "duration": 16200,
+      "word_count": 42
+    },
+    {
+      "type": "scene",
+      "script": [
+        {
+          "time": 18200,
+          "duration": 2000,
+          "type": "scene_padding",
+          "scene": 2,
+          "page": 1
+        },
+        {
+          "type": "scene_heading",
+          "text": "FORCED HEADING",
+          "page": 1,
+          "time": 20200,
+          "duration": 0,
+          "scene": 2
+        },
+        {
+          "type": "action",
+          "text": "A line",
+          "page": 1,
+          "time": 20200,
+          "duration": 900,
+          "scene": 2
+        },
+        {
+          "type": "section",
+          "text": "Sub section",
+          "depth": 2,
+          "page": 1,
+          "time": 21100,
+          "duration": 0,
+          "scene": 2
+        }
+      ],
+      "scene_number": 2,
+      "scene_id": "G2",
+      "slugline": "FORCED HEADING",
+      "time": 20200,
+      "page": 1,
+      "duration": 2900,
+      "word_count": 4
+    },
+    {
+      "type": "scene",
+      "script": [
+        {
+          "time": 21100,
+          "duration": 2000,
+          "type": "scene_padding",
+          "scene": 3,
+          "page": 1
+        },
+        {
+          "type": "scene_heading",
+          "text": "EXT. GARDEN - DAY",
+          "page": 1,
+          "time": 23100,
+          "duration": 0,
+          "scene": 3
+        },
+        {
+          "type": "action",
+          "text": "Words    with   extra    spaces.",
+          "page": 1,
+          "time": 23100,
+          "duration": 1300,
+          "scene": 3
+        },
+        {
+          "type": "transition",
+          "text": "CUT TO:",
+          "page": 1,
+          "time": 24400,
+          "duration": 1000,
+          "scene": 3
+        }
+      ],
+      "scene_number": 3,
+      "scene_id": "G3",
+      "slugline": "EXT. GARDEN - DAY",
+      "time": 23100,
+      "page": 1,
+      "duration": 4300,
+      "word_count": 10
+    },
+    {
+      "type": "scene",
+      "script": [
+        {
+          "time": 25400,
+          "duration": 2000,
+          "type": "scene_padding",
+          "scene": 4,
+          "page": 1
+        },
+        {
+          "type": "scene_heading",
+          "text": "INT./EXT. CAR - MOVING",
+          "scene_number": "3-CCCCC",
+          "page": 1,
+          "time": 27400,
+          "duration": 0,
+          "scene": 4
+        },
+        {
+          "type": "dialogue",
+          "text": "Last line.",
+          "page": 1,
+          "time": 27400,
+          "duration": 1600,
+          "scene": 4,
+          "character": "MARY (V.O.)"
+        }
+      ],
+      "scene_number": 4,
+      "scene_id": "3-CCCCC",
+      "slugline": "INT./EXT. CAR - MOVING",
+      "time": 27400,
+      "page": 1,
+      "duration": 3600,
+      "word_count": 8
+    }
+  ],
+  "locations": [
+    [
+      "INT. KITCHEN",
+      1
+    ],
+    [
+      "FORCED HEADING",
+      1
+    ],
+    [
+      "EXT. GARDEN",
+      1
+    ],
+    [
+      "INT./EXT. CAR",
+      1
+    ]
+  ],
+  "characters": [
+    [
+      "BOB",
+      1
+    ],
+    [
+      "ALICE",
+      1
+    ],
+    [
+      "MARY",
+      1
+    ]
+  ]
+}
