@@ -99,6 +99,39 @@ func TestPathStrokesTaper(t *testing.T) {
 	}
 }
 
+func TestToneCoverage(t *testing.T) {
+	mean := func(img *image.RGBA, x0, x1 int) float64 {
+		s := 0.0
+		for y := 0; y < 200; y++ {
+			for x := x0; x < x1; x++ {
+				s += float64(img.RGBAAt(x, y).A) / 255
+			}
+		}
+		return s / float64(200*(x1-x0))
+	}
+	square := [][2]float64{{0, 0}, {200, 0}, {200, 200}, {0, 200}}
+	for _, c := range []struct {
+		pattern string
+		d       float64
+	}{{"dots", 0.3}, {"dots", 0.7}, {"lines", 0.4}, {"crosshatch", 0.5}} {
+		img, err := Tone(300, 200, FullArea(300, 200), square, ToneSpec{Pattern: c.pattern, Spacing: 10, Density: c.d, Angle: 30, Color: color.RGBA{A: 255}})
+		if err != nil {
+			t.Fatal(err)
+		}
+		if m := mean(img, 0, 200); math.Abs(m-c.d) > 0.04 {
+			t.Errorf("%s at %g: coverage %.3f", c.pattern, c.d, m)
+		}
+		if mean(img, 210, 300) != 0 {
+			t.Errorf("%s: ink outside the polygon", c.pattern)
+		}
+	}
+	g := [4]float64{0, 0, 200, 0}
+	img, _ := Tone(200, 200, FullArea(200, 200), square, ToneSpec{Pattern: "dots", Spacing: 8, Density: 0.6, DensityTo: 0, Gradient: &g})
+	if l, r := mean(img, 0, 40), mean(img, 160, 200); l < 0.45 || r > 0.1 {
+		t.Errorf("gradient: left %.2f right %.2f", l, r)
+	}
+}
+
 func TestSVGMissingFontIsAnError(t *testing.T) {
 	svg := []byte(`<svg xmlns="http://www.w3.org/2000/svg"><text x="10" y="50" style="font-family: No Such Font 42; font-size: 30px">hi</text></svg>`)
 	_, err := SVG(svg, 100, 100, FullArea(100, 100))

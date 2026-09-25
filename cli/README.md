@@ -61,7 +61,7 @@ exists and is tested but is not being extended).
 | panel | add, split, merge, set, delete, list, order, place (`--fit fill|fit|none`), clear-content, map | manga |
 | balloon | add, set, delete, list | manga |
 | spread | render | manga |
-| draw | svg, strokes, path (`--taper both|start|end|none`, `--min-pressure`), text, erase (board, or `--page` [`--panel`]) | both |
+| draw | svg, strokes, path (`--taper both|start|end|none`, `--min-pressure`), tone (`--rect|--polygon --pattern dots|lines|crosshatch --spacing --density --angle [--gradient x1,y1,x2,y2 --density-to]`), text, erase (board, or `--page` [`--panel`]) | both |
 | layer | list, replace, clear, merge, set-opacity (any drawing layer), history, undo, redo | both |
 | board | list, get, info (`usedIn`), add (`--size WxH`, `--like-panel p:K [--place]`), set-name, set-description, delete, duplicate, move, flip, transform, erase-region, fill-region, move-region, render (`--layer`, `--grid`), path, export-clip, cut, paste, replace, set-dialogue/action/notes | both |
 | board | set-new-shot, set-duration, suggest-duration, set-from-script | film |

@@ -72,6 +72,18 @@ it reaches 1 after 30% of the length). Per path: `data-taper`,
 `data-min-pressure`, `stroke-width` (size), `stroke="#rrggbb"`. A bare `d`
 string works too: `echo 'M 10 10 Q 60 0 110 40' | sb draw path 1 -`.
 
+Screentone: `draw tone` fills a `--rect x,y,w,h` or `--polygon "x,y ..."` with
+dots, lines or crosshatch on the `tone` layer (clipped to the panel with
+`--panel`). `--density` is the share covered by ink; `--gradient x1,y1,x2,y2`
+ramps it to `--density-to` (skies, fades).
+
+```sh
+sb draw tone --page 1 --panel K2 --rect 0,0,1200,560 --pattern dots --spacing 10 \
+  --density 0.6 --gradient 0,0,0,450 --density-to 0          # sky fading down
+sb draw tone --page 1 --panel K3 --polygon "50,50 500,80 400,480 30,400" \
+  --pattern lines --spacing 6 --density 0.4 --angle 30       # shadow
+```
+
 Labels: `sb draw text 1 --x 60 --y 40 --size 40 --font bold "INT. KITCHEN"`.
 Corrections: `sb draw erase 1 --layer pencil --rect 600,200,300,300`
 (or `--polygon "x,y x,y x,y"`, `--all` for every layer).
