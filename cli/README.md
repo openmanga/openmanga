@@ -57,13 +57,13 @@ exists and is tested but is not being extended).
 |---|---|---|
 | project | new (`--manga`), set-mode, open, info, stats, migrate, verify [--fix], files, copy, zip, cleanup [--dry-run], contact-sheet | both |
 | recent | list, add, prune | both |
-| page / pages | page setup, add, list, info, delete, move, template, render [--grid]; pages contact-sheet | manga |
+| page / pages | page setup, add, list, info, delete, move, template, render [--grid] [--crop x,y,w,h | --panel K] [--scale f]; pages contact-sheet | manga |
 | panel | add, split, merge, set, delete, list, order, place (`--fit fill|fit|none`), clear-content, map | manga |
 | balloon | add, set, delete, list | manga |
 | spread | render | manga |
 | draw | svg, strokes, path (`--taper both|start|end|none`, `--min-pressure`), tone (`--rect|--polygon --pattern dots|lines|crosshatch --spacing --density --angle [--gradient x1,y1,x2,y2 --density-to]`), text, erase (board, or `--page` [`--panel`]) | both |
 | layer | list, replace, clear, merge, set-opacity (any drawing layer), history, undo, redo | both |
-| board | list, get, info (`usedIn`), add (`--size WxH`, `--like-panel p:K [--place]`), set-name, set-description, delete, duplicate, move, flip, transform, erase-region, fill-region, move-region, render (`--layer`, `--grid`), path, export-clip, cut, paste, replace, set-dialogue/action/notes | both |
+| board | list, get, info (`usedIn`), add (`--size WxH`, `--like-panel p:K [--place]`), set-name, set-description, delete, duplicate, move, flip, transform, erase-region, fill-region, move-region, render (`--layer`, `--grid`, `--crop x,y,w,h`, `--scale f`), path, export-clip, cut, paste, replace, set-dialogue/action/notes | both |
 | board | set-new-shot, set-duration, suggest-duration, set-from-script | film |
 | import | images (boards; `--pages [--fit]`; `--page --panel`) | both / manga |
 | export | pages (`--png`/`--pdf`, `--include-notes`, `--page-numbers`, `--dpi`, `--crop-marks`), images | manga / both |

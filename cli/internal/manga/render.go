@@ -215,20 +215,27 @@ func RefreshPagesUsing(s *story.Scene, uid string) error {
 }
 
 // Guides overlays a coordinate grid (every step px, labelled) and panel tags
-// "K2 #1" (id and reading order) for placing drawings precisely.
-func Guides(dst *image.RGBA, s *story.Scene, pg *ojson.Object, step float64) {
-	render.Grid(dst, step, 1)
+// "K2 #1" (id and reading order) for placing drawings precisely. dst shows the
+// page from ox, oy at scale (a crop/zoom); labels stay in page coordinates.
+func Guides(dst *image.RGBA, s *story.Scene, pg *ojson.Object, step, ox, oy, scale float64) {
+	render.GridAt(dst, step, scale, ox, oy)
 	if pg == nil {
 		return
 	}
 	face := render.Face(render.FontBold, 28)
 	for _, p := range Panels(pg) {
 		box := BBox(EffectivePoints(s, p))
+		vw, vh := float64(dst.Bounds().Dx())/scale, float64(dst.Bounds().Dy())/scale
+		if box.X+box.W <= ox || box.Y+box.H <= oy || box.X >= ox+vw || box.Y >= oy+vh {
+			continue
+		}
+		// keep the tag inside the view when the panel starts above/left of it
+		x, y := math.Max(0, (box.X-ox)*scale), math.Max(0, (box.Y-oy)*scale)
 		label := fmt.Sprintf("%s #%d", p.Str("id"), int(p.NumOr("order", 0)))
 		tw := render.Measure(face, label)
-		r := image.Rect(int(box.X)+8, int(box.Y)+8, int(box.X+tw)+24, int(box.Y)+48)
+		r := image.Rect(int(x)+8, int(y)+8, int(x+tw)+24, int(y)+48)
 		render.FillRect(dst, r, color.NRGBA{0, 90, 220, 220})
-		render.DrawText(dst, face, label, box.X+16, box.Y+38, color.White, "left")
+		render.DrawText(dst, face, label, x+16, y+38, color.White, "left")
 	}
 }
 

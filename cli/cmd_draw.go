@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -134,7 +135,7 @@ func (t *drawTarget) result(c *Ctx, layer string) (map[string]any, error) {
 	}
 	c.Printf("Drew on %s layer %s: %s", t.label(), layer, res["file"])
 	if out := c.Flag("preview"); out != "" {
-		p, err := renderTarget(t, out, c.Bool("grid"), 100, "")
+		p, _, err := renderTarget(t, out, c.Bool("grid"), 100, "", view{})
 		if err != nil {
 			return nil, err
 		}
@@ -144,8 +145,69 @@ func (t *drawTarget) result(c *Ctx, layer string) (map[string]any, error) {
 	return res, nil
 }
 
-// renderTarget writes a flattened (or single-layer) PNG of a board or page.
-func renderTarget(t *drawTarget, out string, grid bool, step float64, layer string) (string, error) {
+// view is the part of a render to keep (--crop, in board/page px) and its zoom
+// (--scale); the zero view is everything at 1x.
+type view struct {
+	crop  *manga.Rect
+	scale float64
+}
+
+var viewFlagSpecs = []string{"crop=x,y,w,h: render only this part (board/page px); grid labels stay in those coordinates", "scale=zoom factor for the output, e.g. 2 (default 1)"}
+
+// viewFlags reads --crop and --scale.
+func viewFlags(c *Ctx) (view, error) {
+	v := view{scale: 1}
+	if s := c.Flag("crop"); s != "" {
+		r, err := manga.ParseRect(s)
+		if err != nil {
+			return v, usagef("--crop: %v", err)
+		}
+		v.crop = &r
+	}
+	if f, ok, err := c.Float("scale"); err != nil {
+		return v, err
+	} else if ok {
+		if f <= 0 || f > 8 {
+			return v, usagef("--scale must be > 0 and at most 8")
+		}
+		v.scale = f
+	}
+	return v, nil
+}
+
+func (v view) isZero() bool { return v.crop == nil && (v.scale == 0 || v.scale == 1) }
+
+// frame crops and scales a full-size render, then draws the grid (and panel
+// tags for a page) in source coordinates. It returns the crop actually used.
+func (v view) frame(img *image.RGBA, grid bool, step float64, s *story.Scene, pg *ojson.Object) (*image.RGBA, manga.Rect, error) {
+	b := img.Bounds()
+	r := manga.Rect{W: float64(b.Dx()), H: float64(b.Dy())}
+	if v.crop != nil {
+		cr := image.Rect(int(math.Floor(v.crop.X)), int(math.Floor(v.crop.Y)), int(math.Ceil(v.crop.X+v.crop.W)), int(math.Ceil(v.crop.Y+v.crop.H))).Intersect(b)
+		if cr.Empty() {
+			return nil, r, usagef("--crop %g,%g,%g,%g is outside the %dx%d image", v.crop.X, v.crop.Y, v.crop.W, v.crop.H, b.Dx(), b.Dy())
+		}
+		img = img.SubImage(cr).(*image.RGBA)
+		r = manga.Rect{X: float64(cr.Min.X), Y: float64(cr.Min.Y), W: float64(cr.Dx()), H: float64(cr.Dy())}
+	}
+	scale := v.scale
+	if scale == 0 {
+		scale = 1
+	}
+	img = render.Resize(img, max(1, int(math.Round(r.W*scale))), max(1, int(math.Round(r.H*scale))))
+	if grid {
+		if pg != nil {
+			manga.Guides(img, s, pg, step, r.X, r.Y, scale)
+		} else {
+			render.GridAt(img, step, scale, r.X, r.Y)
+		}
+	}
+	return img, r, nil
+}
+
+// renderTarget writes a flattened (or single-layer) PNG of a board or page and
+// returns its path and size.
+func renderTarget(t *drawTarget, out string, grid bool, step float64, layer string, v view) (string, image.Point, error) {
 	var img *image.RGBA
 	switch {
 	case layer != "":
@@ -156,18 +218,19 @@ func renderTarget(t *drawTarget, out string, grid bool, step float64, layer stri
 	default:
 		img, _ = story.Flatten(t.s, t.obj, t.w, t.h)
 	}
-	if grid {
-		if t.isPage {
-			manga.Guides(img, t.s, t.obj, step)
-		} else {
-			render.Grid(img, step, 1)
-		}
+	var pg *ojson.Object
+	if t.isPage {
+		pg = t.obj
+	}
+	img, _, err := v.frame(img, grid, step, t.s, pg)
+	if err != nil {
+		return "", image.Point{}, err
 	}
 	abs, _ := filepath.Abs(out)
 	if err := os.MkdirAll(filepath.Dir(abs), 0o755); err != nil {
-		return "", err
+		return "", image.Point{}, err
 	}
-	return abs, render.SavePNG(abs, img)
+	return abs, img.Bounds().Size(), render.SavePNG(abs, img)
 }
 
 func readInput(arg string) ([]byte, error) {

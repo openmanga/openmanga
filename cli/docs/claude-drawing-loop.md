@@ -22,6 +22,18 @@ sb board render 1 --grid --out /tmp/b1.png          # labelled 100 px grid
 sb page render 1 --grid --out /tmp/p1.png           # grid + panel tags "K2 #1" (id, reading order)
 ```
 
+Zoom in to check details or place strokes precisely: `--crop x,y,w,h` (board/page
+px) and `--scale f`; `page render --panel K2` crops to that panel's box. Grid
+labels stay in board/page coordinates, so numbers read off a zoomed render go
+straight into draw commands (panel-local = page minus the panel box origin,
+reported as `crop` in the JSON).
+
+```sh
+sb page render 1 --panel K2 --grid --grid-step 50 --out /tmp/k2.png
+sb page render 1 --crop 700,650,400,300 --scale 2 --grid --out /tmp/zoom.png
+sb board render 1 --crop 600,300,400,300 --scale 1.5 --grid --out /tmp/b1z.png
+```
+
 Read the PNG. Use the grid numbers to place the next strokes.
 
 ## 2. Draw

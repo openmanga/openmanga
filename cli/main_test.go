@@ -140,6 +140,39 @@ func TestMangaPanelDrawing(t *testing.T) {
 	}
 }
 
+func TestRenderCropScale(t *testing.T) {
+	t.Setenv("SB_USER_DATA", t.TempDir())
+	dir := filepath.Join(t.TempDir(), "comic")
+	if out, code := sb(t, "project", "new", dir, "--manga", "--template", "3-tier", "--json"); code != 0 {
+		t.Fatal(out)
+	}
+	p := "--project=" + dir
+	out := filepath.Join(dir, "crop.png")
+	if res, code := sb(t, "page", "render", "1", "--out", out, "--crop", "150,150,300,300", "--scale", "2", "--grid", p, "--json"); code != 0 || !strings.Contains(res, `"width":600`) || !strings.Contains(res, `"height":600`) {
+		t.Fatalf("crop render: %s", res)
+	}
+	img, _ := loadPNG(out)
+	// source x=200 is 50 px into the crop, 100 px at 2x: a grid line; x=150 source (0 in the image) is not
+	if c := img.RGBAAt(100, 400); c.R < 200 || c.G > 200 {
+		t.Errorf("grid line for x=200 expected at 100, got %v", c)
+	}
+	if c := img.RGBAAt(160, 400); c.G < 200 {
+		t.Errorf("no grid line expected at 160, got %v", c)
+	}
+	var res struct {
+		Width, Height int
+		Crop          []float64
+	}
+	s, code := sb(t, "page", "render", "1", "--panel", "K2", "--scale", "0.5", "--out", out, p, "--json")
+	json.Unmarshal([]byte(s), &res)
+	if code != 0 || len(res.Crop) != 4 || res.Width != int(res.Crop[2]/2+0.5) || res.Height != int(res.Crop[3]/2+0.5) {
+		t.Errorf("panel render: %s", s)
+	}
+	if s, code := sb(t, "page", "render", "1", "--crop", "5000,5000,10,10", "--out", out, p, "--json"); code != 2 {
+		t.Errorf("crop outside the page should be a usage error: %s", s)
+	}
+}
+
 func loadPNG(p string) (*image.RGBA, error) {
 	img, err := render.Load(p)
 	if err != nil {

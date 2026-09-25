@@ -60,7 +60,7 @@ func init() {
 		&Cmd{Path: "board move-region", Args: "<i>", Short: "Lasso move: cut a polygon from all layers and paste it offset",
 			Flags: []string{"polygon=points in image pixels", "dx=px", "dy=px"}, Run: cmdBoardMoveRegion},
 		&Cmd{Path: "board render", Args: "<i..>", Short: "Rebuild posterframe (JPG) and thumbnail (PNG), or write a flattened PNG with --out",
-			Flags: []string{"posterframe only the posterframe", "thumbnail only the thumbnail", "out=write the flattened full-size PNG here (one board)", "width=with --out: output width (height keeps aspect)", "layer=with --out: render only this layer (on white)", "grid with --out: overlay a labelled coordinate grid", "grid-step=grid spacing px (default 100)"}, Run: cmdBoardRender},
+			Flags: append([]string{"posterframe only the posterframe", "thumbnail only the thumbnail", "out=write the flattened full-size PNG here (one board)", "width=with --out: output width (height keeps aspect)", "layer=with --out: render only this layer (on white)", "grid with --out: overlay a labelled coordinate grid", "grid-step=grid spacing px (default 100)"}, viewFlagSpecs...), Run: cmdBoardRender},
 
 		&Cmd{Path: "layer list", Args: "[board]", Short: "The six drawing layers (plus 3D/derived ones present) with file, opacity, exists", Flags: []string{"page=a manga page instead of a board"}, Run: cmdLayerList},
 		&Cmd{Path: "layer replace", Args: "<i> <layer> <image>", Short: "Fit an image into a layer (reference gets opacity 1)", Run: cmdLayerReplace},
@@ -799,7 +799,14 @@ func cmdBoardRender(c *Ctx) (any, error) {
 		}
 		b := s.Boards()[idx[0]]
 		w, h := story.SizeOf(s, b)
-		if c.Bool("grid") || c.Flag("layer") != "" {
+		v, err := viewFlags(c)
+		if err != nil {
+			return nil, err
+		}
+		if !v.isZero() && c.Has("width") {
+			return nil, usagef("--width cannot be combined with --crop or --scale (use --scale)")
+		}
+		if c.Bool("grid") || c.Flag("layer") != "" || !v.isZero() {
 			step := 100.0
 			if f, ok, err := c.Float("grid-step"); err != nil {
 				return nil, err
@@ -810,10 +817,11 @@ func cmdBoardRender(c *Ctx) (any, error) {
 				return nil, usagef("unknown layer %q", l)
 			}
 			t := &drawTarget{s: s, obj: b, index: idx[0], w: w, h: h}
-			p, err := renderTarget(t, out, c.Bool("grid"), step, c.Flag("layer"))
+			p, size, err := renderTarget(t, out, c.Bool("grid"), step, c.Flag("layer"), v)
 			if err != nil {
 				return nil, err
 			}
+			w, h = size.X, size.Y
 			c.Printf("Wrote %s (%dx%d)", p, w, h)
 			return map[string]any{"out": p, "width": w, "height": h}, nil
 		}
