@@ -48,7 +48,7 @@ Environment:
 
 ## Command reference
 
-Run `sb help` for the full list (232 commands) and `sb <noun> --help` for flags.
+Run `sb help` for the full list (236 commands) and `sb <noun> --help` for flags.
 **film** marks commands that only matter in film mode (hidden in the v1 manga
 app, kept in the engine); **3D** is Shot Generator data, postponed to v3 (it
 exists and is tested but is not being extended).
@@ -131,7 +131,10 @@ offset), stroke taper width, panel clipping leaves outside pixels untouched,
 layer undo restores the exact previous bytes and history is capped at 20,
 contact sheet size, templates, split with gutter, rtl/ltr reading order,
 balloon pixels stay inside their box, spreads [3|2] vs [2|3], and a CLI test
-drawing into a panel of a manga page.
+drawing into a panel of a manga page; SVG path sampling and taper, screentone
+coverage per pattern and gradient, missing SVG fonts as errors, cropped/zoomed
+renders keep grid labels in source coordinates, pose forward kinematics
+(upright stand, arms follow the preset, side view).
 
 ## Known gaps and deliberate differences
 
