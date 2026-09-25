@@ -4,6 +4,7 @@ import (
 	"errors"
 	"image"
 	"image/color"
+	"math"
 	"testing"
 
 	"sb/internal/render"
@@ -70,6 +71,31 @@ func TestClipLeavesOutsideUntouched(t *testing.T) {
 	Apply(layer, overlay, a, false)
 	if layer.RGBAAt(40, 40) != (color.RGBA{255, 0, 0, 255}) || layer.RGBAAt(80, 80) != (color.RGBA{0, 255, 0, 255}) || layer.RGBAAt(10, 40) != (color.RGBA{0, 255, 0, 255}) {
 		t.Errorf("clip: inside %v outside %v", layer.RGBAAt(40, 40), layer.RGBAAt(80, 80))
+	}
+}
+
+func TestPathStrokesTaper(t *testing.T) {
+	svg := []byte(`<svg><path d="M 10 50 C 40 0, 160 100, 190 50 M 10 90 L 190 90"/><path data-taper="none" stroke-width="7" stroke="#ff0000" d="M 0 0 A 20 20 0 0 1 40 0"/></svg>`)
+	strokes, err := PathStrokes(svg, PathSpec{Taper: "both", MinPressure: 0.2})
+	if err != nil || len(strokes) != 3 {
+		t.Fatalf("want 3 strokes (2 subpaths + 1 path), got %d: %v", len(strokes), err)
+	}
+	s := strokes[0].Points
+	first, mid, last := s[0][2], s[len(s)/2][2], s[len(s)-1][2]
+	if math.Abs(first-0.2) > 1e-9 || math.Abs(last-0.2) > 1e-9 || mid != 1 || len(s) < 50 {
+		t.Errorf("taper: ends %g/%g, middle %g, %d points", first, last, mid, len(s))
+	}
+	arc := strokes[2]
+	if arc.Size != 7 || arc.Color != "#ff0000" || arc.Points[0][2] != 1 {
+		t.Errorf("per-path overrides: %+v", arc.Points[0])
+	}
+	// the arc bulges away from y=0 (sampled, not a straight chord)
+	bulge := 0.0
+	for _, p := range arc.Points {
+		bulge = math.Max(bulge, math.Abs(p[1]))
+	}
+	if bulge < 15 {
+		t.Errorf("arc not sampled: max |y| %g", bulge)
 	}
 }
 

@@ -185,6 +185,9 @@ func init() {
 		&Cmd{Path: "draw strokes", Args: "[board] <file.json|->", Short: "Hand-drawn strokes: point lists [x,y,pressure] with width tapering by pressure",
 			Long:  `JSON: {"tool":"pencil","color":"#222","size":4,"opacity":0.5,"strokes":[{"points":[[x,y,p],...]}]}` + "\nor a list of strokes, or a list of point lists. Points are smoothed (Catmull-Rom) unless \"smooth\": false.\nTools: pencil (4 px, grain), pen (2 px black), light-pencil (20 px #90CBF9), brush (26 px), tone (50 px at 0.15),\nnote-pen (8 px red), eraser. The tool picks the default layer.",
 			Flags: append([]string{"tool=pencil, pen, light-pencil, brush, tone, note-pen or eraser (default pencil)", "replace clear the layer (or the panel area) first"}, targetFlags...), Run: cmdDrawStrokes},
+		&Cmd{Path: "draw path", Args: "[board] <file.svg|->", Short: "SVG path(s) as tapered pressure strokes, drawn like draw strokes",
+			Long:  "Every <path d> (or a bare path \"d\" string) becomes one stroke per subpath; lines, beziers and arcs are\nsampled every 2 px. Pressure rises from --min-pressure at a tapered end to 1 over 30% of the length.\nPer-path attributes: data-taper, data-min-pressure, stroke-width (size), stroke=\"#rrggbb\" (color).\nCoordinates are layer pixels (panel-local with --panel); transform attributes are not applied.",
+			Flags: append([]string{"tool=pencil, pen, light-pencil, brush, tone, note-pen or eraser (default pencil)", "taper=both, start, end or none (default both)", "min-pressure=pressure at a tapered end, 0-1 (default 0.15)", "size=stroke width px (default: the tool's)", "color=#rrggbb (default: the tool's)", "replace clear the layer (or the panel area) first"}, targetFlags...), Run: cmdDrawPath},
 		&Cmd{Path: "draw text", Args: "[board] <text>", Short: "Text label at x,y (top-left of the first line; center/right align around x)",
 			Flags: append([]string{"x=x in px", "y=y in px", "size=font size px (default 32)", "font=thin, light, regular or bold", "color=#rrggbb (default black)", "align=left, center or right", "width=wrap width px", "vertical top-to-bottom columns, right to left"}, targetFlags...), Run: cmdDrawText},
 		&Cmd{Path: "draw erase", Args: "[board]", Short: "Erase a rectangle or polygon on a layer (all drawing layers with --all)",
@@ -244,6 +247,39 @@ func cmdDrawStrokes(c *Ctx) (any, error) {
 	if err != nil {
 		return nil, usagef("%v", err)
 	}
+	return drawStrokeDoc(c, t, doc)
+}
+
+func cmdDrawPath(c *Ctx) (any, error) {
+	t, err := resolveTarget(c)
+	if err != nil {
+		return nil, err
+	}
+	data, err := readInput(firstOr(t.rest, "-"))
+	if err != nil {
+		return nil, err
+	}
+	spec := draw.PathSpec{Taper: c.Flag("taper"), MinPressure: 0.15}
+	if spec.Taper == "" {
+		spec.Taper = "both"
+	}
+	doc := draw.StrokeDoc{Color: c.Flag("color"), Smooth: new(bool)}
+	for name, dst := range map[string]*float64{"min-pressure": &spec.MinPressure, "size": &doc.Size} {
+		if f, ok, err := c.Float(name); err != nil {
+			return nil, err
+		} else if ok {
+			*dst = f
+		}
+	}
+	if doc.Strokes, err = draw.PathStrokes(data, spec); err != nil {
+		return nil, usagef("%v", err)
+	}
+	return drawStrokeDoc(c, t, doc)
+}
+
+// drawStrokeDoc rasterizes strokes with the --tool (or document) tool defaults
+// and writes them to --layer (default: the tool's layer).
+func drawStrokeDoc(c *Ctx, t *drawTarget, doc draw.StrokeDoc) (any, error) {
 	name := c.Flag("tool")
 	if name == "" {
 		name = doc.Tool

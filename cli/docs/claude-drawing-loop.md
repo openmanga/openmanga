@@ -54,6 +54,24 @@ sb draw strokes 1 --tool pen - <<'EOF'
 EOF
 ```
 
+Curves you can describe as SVG paths but want to look inked: `draw path` turns
+each `<path d>` (lines, beziers, arcs; one stroke per subpath) into a pressure
+stroke with tapered ends, using the same tools and rasterizer as `draw strokes`.
+
+```sh
+sb draw path --page 1 --panel K1 --tool pen --size 8 --taper both - <<'EOF'
+<svg>
+  <path d="M 100 300 C 250 50, 450 50, 600 300"/>
+  <path data-taper="start" stroke-width="12" d="M 700 350 A 150 80 0 0 1 1100 350"/>
+</svg>
+EOF
+```
+
+`--taper both|start|end|none`, `--min-pressure 0.15` (pressure at a tapered end;
+it reaches 1 after 30% of the length). Per path: `data-taper`,
+`data-min-pressure`, `stroke-width` (size), `stroke="#rrggbb"`. A bare `d`
+string works too: `echo 'M 10 10 Q 60 0 110 40' | sb draw path 1 -`.
+
 Labels: `sb draw text 1 --x 60 --y 40 --size 40 --font bold "INT. KITCHEN"`.
 Corrections: `sb draw erase 1 --layer pencil --rect 600,200,300,300`
 (or `--polygon "x,y x,y x,y"`, `--all` for every layer).
