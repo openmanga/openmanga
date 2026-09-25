@@ -63,6 +63,7 @@ exists and is tested but is not being extended).
 | spread | render | manga |
 | draw | svg, strokes, path (`--taper both|start|end|none`, `--min-pressure`), tone (`--rect|--polygon --pattern dots|lines|crosshatch --spacing --density --angle [--gradient x1,y1,x2,y2 --density-to]`), text, erase (board, or `--page` [`--panel`]) | both |
 | layer | list, replace, clear, merge, set-opacity (any drawing layer), history, undo, redo | both |
+| pose | list (`--q`), draw `<index|name|id>` (board, or `--page` [`--panel`]; `--view front|3q|side|back`, `--x --y --height`, `--model`): a 2D mannequin from the pose's skeleton on the reference layer, no WebGL | both |
 | board | list, get, info (`usedIn`), add (`--size WxH`, `--like-panel p:K [--place]`), set-name, set-description, delete, duplicate, move, flip, transform, erase-region, fill-region, move-region, render (`--layer`, `--grid`, `--crop x,y,w,h`, `--scale f`), path, export-clip, cut, paste, replace, set-dialogue/action/notes | both |
 | board | set-new-shot, set-duration, suggest-duration, set-from-script | film |
 | import | images (boards; `--pages [--fit]`; `--page --panel`) | both / manga |
@@ -146,7 +147,9 @@ drawing into a panel of a manga page.
   boards with their own `size` to the project size; `export
   pages --pdf` sizes each sheet to the page ratio with the long side of A4.
 
-- `sg render`, explorer thumbnails, pose thumbnails and emotion thumbnails are ui-3d;
+- `sg render`, explorer thumbnails, pose thumbnails and emotion thumbnails are ui-3d
+  (`pose draw` is the CLI's 2D stand-in: forward kinematics on the stored
+  skeletons, orthographic stick figure, no meshes or morph targets);
   `sg preset emotion create` stores the texture and preset without a thumbnail.
 - The raw scene setter is `sg replace --json` (SCOPE's `sg set <i> --json` would
   clash with `sg set <id> key=value`).

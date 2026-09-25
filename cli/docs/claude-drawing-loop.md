@@ -96,6 +96,19 @@ sb draw tone --page 1 --panel K3 --polygon "50,50 500,80 400,480 30,400" \
   --pattern lines --spacing 6 --density 0.4 --angle 30       # shadow
 ```
 
+Figure reference: `pose draw` projects one of the 342 pose presets (forward
+kinematics on the character skeleton) and draws a light-blue mannequin — tapered
+bones, joint dots, head ellipse with eyes, far-side limbs lighter — on the
+`reference` layer to trace over. `--x/--y` is the floor point under the figure,
+`--height` its standing height in px. The JSON lists every joint's position
+(`joints`, area-local), handy for aiming hands, eyes and balloon tails.
+
+```sh
+sb pose list --q run                                  # "232  Run leaning forward", ...
+sb pose draw 232 --page 1 --panel K2 --view 3q --height 480 --x 300 --y 520
+sb pose draw "stand" 1 --view side --model adult-female --preview /tmp/b1.png
+```
+
 Labels: `sb draw text 1 --x 60 --y 40 --size 40 --font bold "INT. KITCHEN"`.
 Corrections: `sb draw erase 1 --layer pencil --rect 600,200,300,300`
 (or `--polygon "x,y x,y x,y"`, `--all` for every layer).

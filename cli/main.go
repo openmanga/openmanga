@@ -409,7 +409,7 @@ func indent(s, pre string) string {
 	return strings.Join(lines, "\n")
 }
 
-var nounOrder = []string{"project", "recent", "page", "pages", "panel", "balloon", "spread", "board", "draw", "layer", "import", "export", "print", "scene", "script", "audio", "shotlist", "sg", "prefs", "keymap", "lang", "doctor", "app", "help", "timelapse", "tip"}
+var nounOrder = []string{"project", "recent", "page", "pages", "panel", "balloon", "spread", "board", "draw", "layer", "pose", "import", "export", "print", "scene", "script", "audio", "shotlist", "sg", "prefs", "keymap", "lang", "doctor", "app", "help", "timelapse", "tip"}
 
 const helpIntro = `sb — Storyboarder Next command line.
 
