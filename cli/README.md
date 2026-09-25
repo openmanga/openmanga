@@ -136,7 +136,9 @@ drawing into a panel of a manga page.
 
 - Drawing: strokes are rasterized as tapered ribbons with round joins (no brush
   textures other than a pencil grain); SVG text uses system fonts found by the
-  SVG renderer, `draw text` and balloons use THICCCBOI with a system fallback.
+  SVG renderer (a `font-family` with no installed match is a `font_not_found`
+  error, not a fallback, because that renderer cannot load the embedded fonts),
+  `draw text` and balloons use THICCCBOI with a system fallback.
 - Layer history keeps 20 versions per layer file in `images/.history/` (ignored
   by cleanup, copy and zip); redo lasts until the next edit.
 - Manga: panels are polygons (no curved panels); balloon tails are straight

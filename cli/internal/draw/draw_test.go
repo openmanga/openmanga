@@ -1,6 +1,7 @@
 package draw
 
 import (
+	"errors"
 	"image"
 	"image/color"
 	"testing"
@@ -69,5 +70,14 @@ func TestClipLeavesOutsideUntouched(t *testing.T) {
 	Apply(layer, overlay, a, false)
 	if layer.RGBAAt(40, 40) != (color.RGBA{255, 0, 0, 255}) || layer.RGBAAt(80, 80) != (color.RGBA{0, 255, 0, 255}) || layer.RGBAAt(10, 40) != (color.RGBA{0, 255, 0, 255}) {
 		t.Errorf("clip: inside %v outside %v", layer.RGBAAt(40, 40), layer.RGBAAt(80, 80))
+	}
+}
+
+func TestSVGMissingFontIsAnError(t *testing.T) {
+	svg := []byte(`<svg xmlns="http://www.w3.org/2000/svg"><text x="10" y="50" style="font-family: No Such Font 42; font-size: 30px">hi</text></svg>`)
+	_, err := SVG(svg, 100, 100, FullArea(100, 100))
+	var fe FontError
+	if !errors.As(err, &fe) || fe.Family != "No Such Font 42" || fe.Code() != "font_not_found" {
+		t.Fatalf("want FontError, got %v", err)
 	}
 }

@@ -282,8 +282,11 @@ func printJSONIndent(v any) { os.Stdout.Write(marshal(v, "  ")) }
 func fail(err error, jsonOut bool) int {
 	code, exit := "failed", 1
 	var ue UsageError
+	var coded interface{ Code() string }
 	if errors.As(err, &ue) {
 		code, exit = "usage", 2
+	} else if errors.As(err, &coded) {
+		code = coded.Code()
 	} else if errors.Is(err, os.ErrNotExist) || errors.Is(err, story.ErrNoProject) {
 		code = "not_found"
 	}
