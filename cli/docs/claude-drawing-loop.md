@@ -22,6 +22,18 @@ sb board render 1 --grid --out /tmp/b1.png          # labelled 100 px grid
 sb page render 1 --grid --out /tmp/p1.png           # grid + panel tags "K2 #1" (id, reading order)
 ```
 
+Zoom in to check details or place strokes precisely: `--crop x,y,w,h` (board/page
+px) and `--scale f`; `page render --panel K2` crops to that panel's box. Grid
+labels stay in board/page coordinates, so numbers read off a zoomed render go
+straight into draw commands (panel-local = page minus the panel box origin,
+reported as `crop` in the JSON).
+
+```sh
+sb page render 1 --panel K2 --grid --grid-step 50 --out /tmp/k2.png
+sb page render 1 --crop 700,650,400,300 --scale 2 --grid --out /tmp/zoom.png
+sb board render 1 --crop 600,300,400,300 --scale 1.5 --grid --out /tmp/b1z.png
+```
+
 Read the PNG. Use the grid numbers to place the next strokes.
 
 ## 2. Draw
@@ -52,6 +64,49 @@ sb draw strokes 1 --tool pen - <<'EOF'
   {"size": 3, "points": [[780,330,0.5],[800,340,1],[820,330,0.5]]}
 ]}
 EOF
+```
+
+Curves you can describe as SVG paths but want to look inked: `draw path` turns
+each `<path d>` (lines, beziers, arcs; one stroke per subpath) into a pressure
+stroke with tapered ends, using the same tools and rasterizer as `draw strokes`.
+
+```sh
+sb draw path --page 1 --panel K1 --tool pen --size 8 --taper both - <<'EOF'
+<svg>
+  <path d="M 100 300 C 250 50, 450 50, 600 300"/>
+  <path data-taper="start" stroke-width="12" d="M 700 350 A 150 80 0 0 1 1100 350"/>
+</svg>
+EOF
+```
+
+`--taper both|start|end|none`, `--min-pressure 0.15` (pressure at a tapered end;
+it reaches 1 after 30% of the length). Per path: `data-taper`,
+`data-min-pressure`, `stroke-width` (size), `stroke="#rrggbb"`. A bare `d`
+string works too: `echo 'M 10 10 Q 60 0 110 40' | sb draw path 1 -`.
+
+Screentone: `draw tone` fills a `--rect x,y,w,h` or `--polygon "x,y ..."` with
+dots, lines or crosshatch on the `tone` layer (clipped to the panel with
+`--panel`). `--density` is the share covered by ink; `--gradient x1,y1,x2,y2`
+ramps it to `--density-to` (skies, fades).
+
+```sh
+sb draw tone --page 1 --panel K2 --rect 0,0,1200,560 --pattern dots --spacing 10 \
+  --density 0.6 --gradient 0,0,0,450 --density-to 0          # sky fading down
+sb draw tone --page 1 --panel K3 --polygon "50,50 500,80 400,480 30,400" \
+  --pattern lines --spacing 6 --density 0.4 --angle 30       # shadow
+```
+
+Figure reference: `pose draw` projects one of the 342 pose presets (forward
+kinematics on the character skeleton) and draws a light-blue mannequin — tapered
+bones, joint dots, head ellipse with eyes, far-side limbs lighter — on the
+`reference` layer to trace over. `--x/--y` is the floor point under the figure,
+`--height` its standing height in px. The JSON lists every joint's position
+(`joints`, area-local), handy for aiming hands, eyes and balloon tails.
+
+```sh
+sb pose list --q run                                  # "232  Run leaning forward", ...
+sb pose draw 232 --page 1 --panel K2 --view 3q --height 480 --x 300 --y 520
+sb pose draw "stand" 1 --view side --model adult-female --preview /tmp/b1.png
 ```
 
 Labels: `sb draw text 1 --x 60 --y 40 --size 40 --font bold "INT. KITCHEN"`.

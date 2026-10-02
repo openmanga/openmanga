@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"strconv"
@@ -134,7 +135,7 @@ func (t *drawTarget) result(c *Ctx, layer string) (map[string]any, error) {
 	}
 	c.Printf("Drew on %s layer %s: %s", t.label(), layer, res["file"])
 	if out := c.Flag("preview"); out != "" {
-		p, err := renderTarget(t, out, c.Bool("grid"), 100, "")
+		p, _, err := renderTarget(t, out, c.Bool("grid"), 100, "", view{})
 		if err != nil {
 			return nil, err
 		}
@@ -144,8 +145,69 @@ func (t *drawTarget) result(c *Ctx, layer string) (map[string]any, error) {
 	return res, nil
 }
 
-// renderTarget writes a flattened (or single-layer) PNG of a board or page.
-func renderTarget(t *drawTarget, out string, grid bool, step float64, layer string) (string, error) {
+// view is the part of a render to keep (--crop, in board/page px) and its zoom
+// (--scale); the zero view is everything at 1x.
+type view struct {
+	crop  *manga.Rect
+	scale float64
+}
+
+var viewFlagSpecs = []string{"crop=x,y,w,h: render only this part (board/page px); grid labels stay in those coordinates", "scale=zoom factor for the output, e.g. 2 (default 1)"}
+
+// viewFlags reads --crop and --scale.
+func viewFlags(c *Ctx) (view, error) {
+	v := view{scale: 1}
+	if s := c.Flag("crop"); s != "" {
+		r, err := manga.ParseRect(s)
+		if err != nil {
+			return v, usagef("--crop: %v", err)
+		}
+		v.crop = &r
+	}
+	if f, ok, err := c.Float("scale"); err != nil {
+		return v, err
+	} else if ok {
+		if f <= 0 || f > 8 {
+			return v, usagef("--scale must be > 0 and at most 8")
+		}
+		v.scale = f
+	}
+	return v, nil
+}
+
+func (v view) isZero() bool { return v.crop == nil && (v.scale == 0 || v.scale == 1) }
+
+// frame crops and scales a full-size render, then draws the grid (and panel
+// tags for a page) in source coordinates. It returns the crop actually used.
+func (v view) frame(img *image.RGBA, grid bool, step float64, s *story.Scene, pg *ojson.Object) (*image.RGBA, manga.Rect, error) {
+	b := img.Bounds()
+	r := manga.Rect{W: float64(b.Dx()), H: float64(b.Dy())}
+	if v.crop != nil {
+		cr := image.Rect(int(math.Floor(v.crop.X)), int(math.Floor(v.crop.Y)), int(math.Ceil(v.crop.X+v.crop.W)), int(math.Ceil(v.crop.Y+v.crop.H))).Intersect(b)
+		if cr.Empty() {
+			return nil, r, usagef("--crop %g,%g,%g,%g is outside the %dx%d image", v.crop.X, v.crop.Y, v.crop.W, v.crop.H, b.Dx(), b.Dy())
+		}
+		img = img.SubImage(cr).(*image.RGBA)
+		r = manga.Rect{X: float64(cr.Min.X), Y: float64(cr.Min.Y), W: float64(cr.Dx()), H: float64(cr.Dy())}
+	}
+	scale := v.scale
+	if scale == 0 {
+		scale = 1
+	}
+	img = render.Resize(img, max(1, int(math.Round(r.W*scale))), max(1, int(math.Round(r.H*scale))))
+	if grid {
+		if pg != nil {
+			manga.Guides(img, s, pg, step, r.X, r.Y, scale)
+		} else {
+			render.GridAt(img, step, scale, r.X, r.Y)
+		}
+	}
+	return img, r, nil
+}
+
+// renderTarget writes a flattened (or single-layer) PNG of a board or page and
+// returns its path and size.
+func renderTarget(t *drawTarget, out string, grid bool, step float64, layer string, v view) (string, image.Point, error) {
 	var img *image.RGBA
 	switch {
 	case layer != "":
@@ -156,18 +218,19 @@ func renderTarget(t *drawTarget, out string, grid bool, step float64, layer stri
 	default:
 		img, _ = story.Flatten(t.s, t.obj, t.w, t.h)
 	}
-	if grid {
-		if t.isPage {
-			manga.Guides(img, t.s, t.obj, step)
-		} else {
-			render.Grid(img, step, 1)
-		}
+	var pg *ojson.Object
+	if t.isPage {
+		pg = t.obj
+	}
+	img, _, err := v.frame(img, grid, step, t.s, pg)
+	if err != nil {
+		return "", image.Point{}, err
 	}
 	abs, _ := filepath.Abs(out)
 	if err := os.MkdirAll(filepath.Dir(abs), 0o755); err != nil {
-		return "", err
+		return "", image.Point{}, err
 	}
-	return abs, render.SavePNG(abs, img)
+	return abs, img.Bounds().Size(), render.SavePNG(abs, img)
 }
 
 func readInput(arg string) ([]byte, error) {
@@ -185,6 +248,12 @@ func init() {
 		&Cmd{Path: "draw strokes", Args: "[board] <file.json|->", Short: "Hand-drawn strokes: point lists [x,y,pressure] with width tapering by pressure",
 			Long:  `JSON: {"tool":"pencil","color":"#222","size":4,"opacity":0.5,"strokes":[{"points":[[x,y,p],...]}]}` + "\nor a list of strokes, or a list of point lists. Points are smoothed (Catmull-Rom) unless \"smooth\": false.\nTools: pencil (4 px, grain), pen (2 px black), light-pencil (20 px #90CBF9), brush (26 px), tone (50 px at 0.15),\nnote-pen (8 px red), eraser. The tool picks the default layer.",
 			Flags: append([]string{"tool=pencil, pen, light-pencil, brush, tone, note-pen or eraser (default pencil)", "replace clear the layer (or the panel area) first"}, targetFlags...), Run: cmdDrawStrokes},
+		&Cmd{Path: "draw path", Args: "[board] <file.svg|->", Short: "SVG path(s) as tapered pressure strokes, drawn like draw strokes",
+			Long:  "Every <path d> (or a bare path \"d\" string) becomes one stroke per subpath; lines, beziers and arcs are\nsampled every 2 px. Pressure rises from --min-pressure at a tapered end to 1 over 30% of the length.\nPer-path attributes: data-taper, data-min-pressure, stroke-width (size), stroke=\"#rrggbb\" (color).\nCoordinates are layer pixels (panel-local with --panel); transform attributes are not applied.",
+			Flags: append([]string{"tool=pencil, pen, light-pencil, brush, tone, note-pen or eraser (default pencil)", "taper=both, start, end or none (default both)", "min-pressure=pressure at a tapered end, 0-1 (default 0.15)", "size=stroke width px (default: the tool's)", "color=#rrggbb (default: the tool's)", "replace clear the layer (or the panel area) first"}, targetFlags...), Run: cmdDrawPath},
+		&Cmd{Path: "draw tone", Args: "[board]", Short: "Screentone fill (dots, lines, crosshatch) of a rectangle or polygon, optionally a density gradient",
+			Long:  "Density is the share of the area covered by ink (0.3 = 30% grey). With --gradient x1,y1,x2,y2 the density goes from\n--density at x1,y1 to --density-to at x2,y2 (skies: dense at the top, fading down). Clipped to the panel with --panel.",
+			Flags: append([]string{"rect=x,y,w,h", `polygon=points "x,y x,y x,y"`, "pattern=dots, lines or crosshatch (default dots)", "spacing=px between dots/lines (default 8)", "density=ink coverage 0-1 (default 0.3)", "angle=pattern angle in degrees (default 45)", "gradient=x1,y1,x2,y2: ramp density from the first point to the second", "density-to=density at the gradient end (default 0)", "color=#rrggbb (default black)", "replace clear the layer (or the panel area) first"}, targetFlags...), Run: cmdDrawTone},
 		&Cmd{Path: "draw text", Args: "[board] <text>", Short: "Text label at x,y (top-left of the first line; center/right align around x)",
 			Flags: append([]string{"x=x in px", "y=y in px", "size=font size px (default 32)", "font=thin, light, regular or bold", "color=#rrggbb (default black)", "align=left, center or right", "width=wrap width px", "vertical top-to-bottom columns, right to left"}, targetFlags...), Run: cmdDrawText},
 		&Cmd{Path: "draw erase", Args: "[board]", Short: "Erase a rectangle or polygon on a layer (all drawing layers with --all)",
@@ -244,6 +313,39 @@ func cmdDrawStrokes(c *Ctx) (any, error) {
 	if err != nil {
 		return nil, usagef("%v", err)
 	}
+	return drawStrokeDoc(c, t, doc)
+}
+
+func cmdDrawPath(c *Ctx) (any, error) {
+	t, err := resolveTarget(c)
+	if err != nil {
+		return nil, err
+	}
+	data, err := readInput(firstOr(t.rest, "-"))
+	if err != nil {
+		return nil, err
+	}
+	spec := draw.PathSpec{Taper: c.Flag("taper"), MinPressure: 0.15}
+	if spec.Taper == "" {
+		spec.Taper = "both"
+	}
+	doc := draw.StrokeDoc{Color: c.Flag("color"), Smooth: new(bool)}
+	for name, dst := range map[string]*float64{"min-pressure": &spec.MinPressure, "size": &doc.Size} {
+		if f, ok, err := c.Float(name); err != nil {
+			return nil, err
+		} else if ok {
+			*dst = f
+		}
+	}
+	if doc.Strokes, err = draw.PathStrokes(data, spec); err != nil {
+		return nil, usagef("%v", err)
+	}
+	return drawStrokeDoc(c, t, doc)
+}
+
+// drawStrokeDoc rasterizes strokes with the --tool (or document) tool defaults
+// and writes them to --layer (default: the tool's layer).
+func drawStrokeDoc(c *Ctx, t *drawTarget, doc draw.StrokeDoc) (any, error) {
 	name := c.Flag("tool")
 	if name == "" {
 		name = doc.Tool
@@ -338,20 +440,9 @@ func cmdDrawErase(c *Ctx) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	var pts [][2]float64
-	switch {
-	case c.Flag("rect") != "":
-		r, err := manga.ParseRect(c.Flag("rect"))
-		if err != nil {
-			return nil, usagef("%v", err)
-		}
-		pts = manga.RectPoly(r)
-	case c.Flag("polygon") != "":
-		if pts, err = story.ParsePolygon(c.Flag("polygon")); err != nil {
-			return nil, usagef("%v", err)
-		}
-	default:
-		return nil, usagef("give --rect or --polygon")
+	pts, err := shapeFlag(c)
+	if err != nil {
+		return nil, err
 	}
 	for i := range pts {
 		pts[i][0] += t.area.X
@@ -384,6 +475,73 @@ func cmdDrawErase(c *Ctx) (any, error) {
 		return map[string]any{"erased": 0}, nil
 	}
 	return res, nil
+}
+
+// shapeFlag reads --rect x,y,w,h or --polygon "x,y x,y x,y".
+func shapeFlag(c *Ctx) ([][2]float64, error) {
+	switch {
+	case c.Flag("rect") != "":
+		r, err := manga.ParseRect(c.Flag("rect"))
+		if err != nil {
+			return nil, usagef("%v", err)
+		}
+		return manga.RectPoly(r), nil
+	case c.Flag("polygon") != "":
+		pts, err := story.ParsePolygon(c.Flag("polygon"))
+		if err != nil {
+			return nil, usagef("%v", err)
+		}
+		return pts, nil
+	}
+	return nil, usagef("give --rect or --polygon")
+}
+
+func cmdDrawTone(c *Ctx) (any, error) {
+	t, err := resolveTarget(c)
+	if err != nil {
+		return nil, err
+	}
+	pts, err := shapeFlag(c)
+	if err != nil {
+		return nil, err
+	}
+	layer := c.Flag("layer")
+	if layer == "" {
+		layer = "tone"
+	}
+	if err := t.checkLayer(layer); err != nil {
+		return nil, err
+	}
+	spec := draw.ToneSpec{Pattern: c.Flag("pattern"), Spacing: 8, Density: 0.3, Angle: 45, Color: color.RGBA{0, 0, 0, 255}}
+	if spec.Pattern == "" {
+		spec.Pattern = "dots"
+	}
+	for name, dst := range map[string]*float64{"spacing": &spec.Spacing, "density": &spec.Density, "density-to": &spec.DensityTo, "angle": &spec.Angle} {
+		if f, ok, err := c.Float(name); err != nil {
+			return nil, err
+		} else if ok {
+			*dst = f
+		}
+	}
+	if v := c.Flag("gradient"); v != "" {
+		var g [4]float64
+		if n, _ := fmt.Sscanf(strings.ReplaceAll(v, " ", ""), "%g,%g,%g,%g", &g[0], &g[1], &g[2], &g[3]); n != 4 {
+			return nil, usagef("--gradient must be x1,y1,x2,y2")
+		}
+		spec.Gradient = &g
+	} else if c.Has("density-to") {
+		return nil, usagef("--density-to needs --gradient")
+	}
+	if v := c.Flag("color"); v != "" {
+		if spec.Color, err = render.ParseColor(v); err != nil {
+			return nil, usagef("%v", err)
+		}
+	}
+	overlay, err := draw.Tone(t.w, t.h, t.area, pts, spec)
+	if err != nil {
+		return nil, usagef("%v", err)
+	}
+	return t.write(c, layer, overlay, false, c.Bool("replace"))
 }
 
 // layerArgs reads `[board] <layer>` or `--page <p> <layer>`.

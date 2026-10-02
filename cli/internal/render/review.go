@@ -14,7 +14,11 @@ import (
 // Grid overlays thin lines every step pixels (image coordinates, scaled by
 // scale for smaller renders) with coordinate labels along the top and left,
 // so drawing instructions can be placed precisely.
-func Grid(dst *image.RGBA, step, scale float64) {
+func Grid(dst *image.RGBA, step, scale float64) { GridAt(dst, step, scale, 0, 0) }
+
+// GridAt is Grid for an image showing source pixels from ox, oy on (a crop):
+// lines and labels stay in source coordinates.
+func GridAt(dst *image.RGBA, step, scale, ox, oy float64) {
 	if step <= 0 {
 		return
 	}
@@ -23,27 +27,27 @@ func Grid(dst *image.RGBA, step, scale float64) {
 	line := color.NRGBA{255, 0, 140, 90}
 	major := color.NRGBA{255, 0, 140, 170}
 	face := Face(FontRegular, math.Max(11, 14*math.Min(1, scale*2)))
-	for i := 0; float64(i)*step*scale <= w; i++ {
-		x := int(math.Round(float64(i) * step * scale))
+	for i := int(math.Ceil(ox / step)); (float64(i)*step-ox)*scale <= w; i++ {
+		x := int(math.Round((float64(i)*step - ox) * scale))
 		c := line
 		if i%5 == 0 {
 			c = major
 		}
 		FillRect(dst, image.Rect(x, 0, x+1, b.Dy()), c)
-		if i > 0 {
+		if x > 0 {
 			label := fmt.Sprint(i * int(step))
 			FillRect(dst, image.Rect(x+2, 2, x+4+int(Measure(face, label)), 18), color.NRGBA{255, 255, 255, 200})
 			DrawText(dst, face, label, float64(x+3), 15, major, "left")
 		}
 	}
-	for i := 0; float64(i)*step*scale <= h; i++ {
-		y := int(math.Round(float64(i) * step * scale))
+	for i := int(math.Ceil(oy / step)); (float64(i)*step-oy)*scale <= h; i++ {
+		y := int(math.Round((float64(i)*step - oy) * scale))
 		c := line
 		if i%5 == 0 {
 			c = major
 		}
 		FillRect(dst, image.Rect(0, y, b.Dx(), y+1), c)
-		if i > 0 {
+		if y > 0 {
 			label := fmt.Sprint(i * int(step))
 			FillRect(dst, image.Rect(2, y+2, 4+int(Measure(face, label)), y+18), color.NRGBA{255, 255, 255, 200})
 			DrawText(dst, face, label, 3, float64(y+15), major, "left")

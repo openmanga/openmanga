@@ -29,7 +29,7 @@ func init() {
 		&Cmd{Path: "page delete", Args: "<p..>", Short: "Delete pages (files stay on disk)", Run: cmdPageDelete},
 		&Cmd{Path: "page move", Args: "<p>", Short: "Move a page to another position", Flags: []string{"to=target page number"}, Run: cmdPageMove},
 		&Cmd{Path: "page template", Args: "<p> <name>", Short: "Replace the page's panels: splash, 2-tier, 3-tier, 4-koma, big-plus-2, grid-RxC (e.g. grid-3x2)", Flags: []string{"gutter=gutter px (default: 2.4% of height between tiers, 1.7% of width between columns)"}, Run: cmdPageTemplate},
-		&Cmd{Path: "page render", Args: "<p>", Short: "Render a page (placed boards, page layers, frames, balloons) to PNG", Flags: []string{"out=output PNG (required)", "grid overlay a coordinate grid and panel tags (id #order)", "grid-step=grid spacing px (default 100)"}, Run: cmdPageRender},
+		&Cmd{Path: "page render", Args: "<p>", Short: "Render a page (placed boards, page layers, frames, balloons) to PNG", Flags: append([]string{"out=output PNG (required)", "grid overlay a coordinate grid and panel tags (id #order)", "grid-step=grid spacing px (default 100)", "panel=crop to this panel's box (id or reading number)"}, viewFlagSpecs...), Run: cmdPageRender},
 		&Cmd{Path: "pages contact-sheet", Short: "All pages in one PNG, for reviewing the whole chapter", Flags: []string{"out=output PNG (required)", "pages=pages, e.g. 1-8 (default all)", "cols=columns (default 6)", "width=cell width px (default 300)"}, Run: cmdPageContactSheet},
 		&Cmd{Path: "spread render", Args: "<p>", Short: "Render the two-page spread containing page p, in reading order",
 			Long:  "rtl: page 1 alone (on the left), then [3|2], [5|4]: the even page is on the right.\nltr: page 1 alone (on the right), then [2|3], [4|5]. With page.firstPageSingle false spreads start at page 1.",
@@ -380,13 +380,29 @@ func cmdPageRender(c *Ctx) (any, error) {
 	if err != nil {
 		return nil, err
 	}
-	img, warnings := manga.Compose(s, pg)
-	if c.Bool("grid") {
-		step, err := renderStep(c)
+	v, err := viewFlags(c)
+	if err != nil {
+		return nil, err
+	}
+	if id := c.Flag("panel"); id != "" {
+		if v.crop != nil {
+			return nil, usagef("use --panel or --crop, not both")
+		}
+		p, err := manga.FindPanel(pg, id)
 		if err != nil {
 			return nil, err
 		}
-		manga.Guides(img, s, pg, step)
+		box, _ := manga.PanelArea(s, p)
+		v.crop = &box
+	}
+	step, err := renderStep(c)
+	if err != nil {
+		return nil, err
+	}
+	img, warnings := manga.Compose(s, pg)
+	img, crop, err := v.frame(img, c.Bool("grid"), step, s, pg)
+	if err != nil {
+		return nil, err
 	}
 	abs, _ := filepath.Abs(c.Flag("out"))
 	os.MkdirAll(filepath.Dir(abs), 0o755)
@@ -400,7 +416,7 @@ func cmdPageRender(c *Ctx) (any, error) {
 	if warnings == nil {
 		warnings = []string{}
 	}
-	return map[string]any{"page": i + 1, "path": abs, "width": img.Bounds().Dx(), "height": img.Bounds().Dy(), "warnings": warnings}, nil
+	return map[string]any{"page": i + 1, "path": abs, "width": img.Bounds().Dx(), "height": img.Bounds().Dy(), "crop": []float64{crop.X, crop.Y, crop.W, crop.H}, "scale": v.scale, "warnings": warnings}, nil
 }
 
 func cmdSpreadRender(c *Ctx) (any, error) {

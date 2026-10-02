@@ -11,6 +11,7 @@ import (
 	stddraw "image/draw"
 	"io"
 	"math"
+	"regexp"
 	"strings"
 
 	"github.com/tdewolff/canvas"
@@ -102,6 +103,9 @@ func SVG(data []byte, layerW, layerH int, a Area) (*image.RGBA, error) {
 		i := strings.Index(src, "<svg")
 		src = src[:i+4] + fmt.Sprintf(` width="%g" height="%g" viewBox="0 0 %g %g"`, a.W, a.H, a.W, a.H) + src[i+4:]
 	}
+	if err := checkFonts(src); err != nil {
+		return nil, err
+	}
 	c, err := canvas.ParseSVG(strings.NewReader(src))
 	if err != nil {
 		return nil, fmt.Errorf("could not parse SVG: %w", err)
@@ -118,6 +122,40 @@ func SVG(data []byte, layerW, layerH int, a Area) (*image.RGBA, error) {
 	overlay := render.New(layerW, layerH)
 	stddraw.Draw(overlay, image.Rect(int(math.Round(a.X)), int(math.Round(a.Y)), int(math.Round(a.X))+w, int(math.Round(a.Y))+h), piece, image.Point{}, stddraw.Over)
 	return overlay, nil
+}
+
+// FontError is an SVG font-family that matches no installed font. The SVG
+// renderer only loads system fonts by name and panics when one is missing, so
+// fonts are checked before parsing.
+type FontError struct{ Family string }
+
+func (e FontError) Error() string {
+	return fmt.Sprintf("no installed font matches font-family %q; use a font installed on this machine or a generic family (serif, sans-serif, monospace), or `sb draw text` (embedded THICCCBOI)", e.Family)
+}
+
+// Code is the JSON error code.
+func (e FontError) Code() string { return "font_not_found" }
+
+var fontFamilyRe = regexp.MustCompile(`font-family\s*(?:=\s*(?:"([^"]*)"|'([^']*)')|:\s*([^;"}<]+))`)
+
+// checkFonts finds every font-family the SVG names (attributes, style
+// attributes, <style> CSS; "serif" is the default for <text>) and reports the
+// first that no system font matches. It may reject a family set on an element
+// without text; that is cheaper than replaying style inheritance.
+func checkFonts(src string) error {
+	if !strings.Contains(src, "<text") {
+		return nil
+	}
+	families := []string{"serif"}
+	for _, m := range fontFamilyRe.FindAllStringSubmatch(src, -1) {
+		families = append(families, strings.TrimSpace(m[1]+m[2]+m[3]))
+	}
+	for _, f := range families {
+		if _, ok := canvas.FindSystemFont(f, canvas.FontRegular); !ok {
+			return FontError{f}
+		}
+	}
+	return nil
 }
 
 // Text draws a text block at x, y (area-local; y is the top of the first line).

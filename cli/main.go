@@ -282,8 +282,11 @@ func printJSONIndent(v any) { os.Stdout.Write(marshal(v, "  ")) }
 func fail(err error, jsonOut bool) int {
 	code, exit := "failed", 1
 	var ue UsageError
+	var coded interface{ Code() string }
 	if errors.As(err, &ue) {
 		code, exit = "usage", 2
+	} else if errors.As(err, &coded) {
+		code = coded.Code()
 	} else if errors.Is(err, os.ErrNotExist) || errors.Is(err, story.ErrNoProject) {
 		code = "not_found"
 	}
@@ -406,7 +409,7 @@ func indent(s, pre string) string {
 	return strings.Join(lines, "\n")
 }
 
-var nounOrder = []string{"project", "recent", "page", "pages", "panel", "balloon", "spread", "board", "draw", "layer", "import", "export", "print", "scene", "script", "audio", "shotlist", "sg", "prefs", "keymap", "lang", "doctor", "app", "help", "timelapse", "tip"}
+var nounOrder = []string{"project", "recent", "page", "pages", "panel", "balloon", "spread", "board", "draw", "layer", "pose", "import", "export", "print", "scene", "script", "audio", "shotlist", "sg", "prefs", "keymap", "lang", "doctor", "app", "help", "timelapse", "tip"}
 
 const helpIntro = `sb — Storyboarder Next command line.
 

@@ -48,7 +48,7 @@ Environment:
 
 ## Command reference
 
-Run `sb help` for the full list (232 commands) and `sb <noun> --help` for flags.
+Run `sb help` for the full list (236 commands) and `sb <noun> --help` for flags.
 **film** marks commands that only matter in film mode (hidden in the v1 manga
 app, kept in the engine); **3D** is Shot Generator data, postponed to v3 (it
 exists and is tested but is not being extended).
@@ -57,13 +57,14 @@ exists and is tested but is not being extended).
 |---|---|---|
 | project | new (`--manga`), set-mode, open, info, stats, migrate, verify [--fix], files, copy, zip, cleanup [--dry-run], contact-sheet | both |
 | recent | list, add, prune | both |
-| page / pages | page setup, add, list, info, delete, move, template, render [--grid]; pages contact-sheet | manga |
+| page / pages | page setup, add, list, info, delete, move, template, render [--grid] [--crop x,y,w,h | --panel K] [--scale f]; pages contact-sheet | manga |
 | panel | add, split, merge, set, delete, list, order, place (`--fit fill|fit|none`), clear-content, map | manga |
 | balloon | add, set, delete, list | manga |
 | spread | render | manga |
-| draw | svg, strokes, text, erase (board, or `--page` [`--panel`]) | both |
+| draw | svg, strokes, path (`--taper both|start|end|none`, `--min-pressure`), tone (`--rect|--polygon --pattern dots|lines|crosshatch --spacing --density --angle [--gradient x1,y1,x2,y2 --density-to]`), text, erase (board, or `--page` [`--panel`]) | both |
 | layer | list, replace, clear, merge, set-opacity (any drawing layer), history, undo, redo | both |
-| board | list, get, info (`usedIn`), add (`--size WxH`, `--like-panel p:K [--place]`), set-name, set-description, delete, duplicate, move, flip, transform, erase-region, fill-region, move-region, render (`--layer`, `--grid`), path, export-clip, cut, paste, replace, set-dialogue/action/notes | both |
+| pose | list (`--q`), draw `<index|name|id>` (board, or `--page` [`--panel`]; `--view front|3q|side|back`, `--x --y --height`, `--model`): a 2D mannequin from the pose's skeleton on the reference layer, no WebGL | both |
+| board | list, get, info (`usedIn`), add (`--size WxH`, `--like-panel p:K [--place]`), set-name, set-description, delete, duplicate, move, flip, transform, erase-region, fill-region, move-region, render (`--layer`, `--grid`, `--crop x,y,w,h`, `--scale f`), path, export-clip, cut, paste, replace, set-dialogue/action/notes | both |
 | board | set-new-shot, set-duration, suggest-duration, set-from-script | film |
 | import | images (boards; `--pages [--fit]`; `--page --panel`) | both / manga |
 | export | pages (`--png`/`--pdf`, `--include-notes`, `--page-numbers`, `--dpi`, `--crop-marks`), images | manga / both |
@@ -130,13 +131,18 @@ offset), stroke taper width, panel clipping leaves outside pixels untouched,
 layer undo restores the exact previous bytes and history is capped at 20,
 contact sheet size, templates, split with gutter, rtl/ltr reading order,
 balloon pixels stay inside their box, spreads [3|2] vs [2|3], and a CLI test
-drawing into a panel of a manga page.
+drawing into a panel of a manga page; SVG path sampling and taper, screentone
+coverage per pattern and gradient, missing SVG fonts as errors, cropped/zoomed
+renders keep grid labels in source coordinates, pose forward kinematics
+(upright stand, arms follow the preset, side view).
 
 ## Known gaps and deliberate differences
 
 - Drawing: strokes are rasterized as tapered ribbons with round joins (no brush
   textures other than a pencil grain); SVG text uses system fonts found by the
-  SVG renderer, `draw text` and balloons use THICCCBOI with a system fallback.
+  SVG renderer (a `font-family` with no installed match is a `font_not_found`
+  error, not a fallback, because that renderer cannot load the embedded fonts),
+  `draw text` and balloons use THICCCBOI with a system fallback.
 - Layer history keeps 20 versions per layer file in `images/.history/` (ignored
   by cleanup, copy and zip); redo lasts until the next edit.
 - Manga: panels are polygons (no curved panels); balloon tails are straight
@@ -144,7 +150,9 @@ drawing into a panel of a manga page.
   boards with their own `size` to the project size; `export
   pages --pdf` sizes each sheet to the page ratio with the long side of A4.
 
-- `sg render`, explorer thumbnails, pose thumbnails and emotion thumbnails are ui-3d;
+- `sg render`, explorer thumbnails, pose thumbnails and emotion thumbnails are ui-3d
+  (`pose draw` is the CLI's 2D stand-in: forward kinematics on the stored
+  skeletons, orthographic stick figure, no meshes or morph targets);
   `sg preset emotion create` stores the texture and preset without a thumbnail.
 - The raw scene setter is `sg replace --json` (SCOPE's `sg set <i> --json` would
   clash with `sg set <id> key=value`).
