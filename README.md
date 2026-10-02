@@ -13,20 +13,32 @@ Because everything goes through `sb`, an agent such as Claude can draw pages too
 
 ![Recent projects](docs/images/welcome.png)
 
+![Editor with the chibi page](docs/images/editor-chibi.png)
+
 ## Drawn with `sb`
 
-| A page drawn through the CLI | Pose references from `sb pose draw` |
+| Story page | Chibi page | Action page |
+|---|---|---|
+| ![Girls page](docs/images/page-girls.png) | ![Chibi page](docs/images/page-chibi.png) | ![Samurai page](docs/images/page-samurai.png) |
+
+The faces come from a small head model built on Loomis construction:
+
+- Eyes, brows, nose, mouth and ears sit on a 3D head surface that is rotated and projected, so three-quarter and profile views foreshorten correctly.
+- The face outline is traced from the projected head, and hair is built from tapered 3D clumps.
+- Shading is cast shadows (bangs on the forehead, jaw on the neck) filled with `draw tone`.
+- Style presets cover male, female and chibi faces. Expressions cover laughing, crying, shock, gloom lines, sweat drops, blush and sparkles.
+
+Each page is assembled with these commands:
+
+| Command | Used for |
 |---|---|
-| ![Samurai page](docs/images/page-samurai.png) | ![Pose study](docs/images/page-poses.png) |
+| `page template`, `panel split` | the panel layout |
+| `draw svg` | solid shapes |
+| `draw path` | tapered ink lines |
+| `draw tone` | screentone |
+| `balloon add` | dialogue |
 
-The samurai page uses:
-
-- `page template` for the panel layout;
-- `pose draw` for the figure's skeleton;
-- `draw tone` for the gradient screentone sky and line tone;
-- `draw path` for tapered ink lines;
-- `draw svg` for solid shapes;
-- `balloon add` for the narration box and speech balloon.
+The samurai's full figure is traced over a `pose draw` skeleton. The sound effects (ガリッ, アハハハ, ズーン, チャキッ) are hand-lettered as paths.
 
 ## Features
 
